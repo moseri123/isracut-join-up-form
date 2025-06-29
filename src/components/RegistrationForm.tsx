@@ -51,6 +51,10 @@ const RegistrationForm = () => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
+  const handleBooleanChange = (field: string, value: boolean) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+  };
+
   const handleCheckboxChange = (option: string, checked: boolean) => {
     setFormData(prev => ({
       ...prev,
@@ -301,7 +305,7 @@ const RegistrationForm = () => {
                 <Checkbox
                   id="agreeToTerms"
                   checked={formData.agreeToTerms}
-                  onCheckedChange={(checked) => handleInputChange('agreeToTerms', checked as boolean)}
+                  onCheckedChange={(checked) => handleBooleanChange('agreeToTerms', checked as boolean)}
                 />
                 <div className="text-sm">
                   <Label htmlFor="agreeToTerms" className="cursor-pointer">
