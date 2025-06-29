@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -112,23 +111,23 @@ const RegistrationForm = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-pink-50 via-purple-50 to-indigo-50 py-8 px-4 animate-fade-in" dir="rtl">
       <div className="max-w-2xl mx-auto">
-        <div className="text-center mb-8 animate-scale-in">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full mb-4 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-110">
-            <Scissors className="w-8 h-8 text-white animate-pulse" />
+        <div className="text-center mb-8">
+          <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full mb-4 shadow-lg hover:shadow-xl transition-all duration-300">
+            <Scissors className="w-8 h-8 text-white" />
           </div>
           <h1 className="text-4xl font-bold text-gray-900 mb-2 hover:text-purple-600 transition-colors duration-300">
             קהילת המספרות של ישראל
           </h1>
           <p className="text-lg text-gray-600 flex items-center justify-center gap-2">
-            <Sparkles className="w-5 h-5 text-purple-500 animate-bounce" />
+            <Sparkles className="w-5 h-5 text-purple-500" />
             הצטרפו לקהילה המקצועית המובילה במדינה
-            <Sparkles className="w-5 h-5 text-purple-500 animate-bounce" style={{ animationDelay: '0.5s' }} />
+            <Sparkles className="w-5 h-5 text-purple-500" />
           </p>
         </div>
 
         <BenefitsCard />
 
-        <Card className="shadow-2xl border-0 hover:shadow-3xl transition-all duration-300 transform hover:-translate-y-1">
+        <Card className="shadow-2xl border-0 hover:shadow-3xl transition-all duration-300">
           <CardHeader className="bg-gradient-to-r from-indigo-100 to-purple-100 border-b border-purple-200">
             <CardTitle className="text-2xl text-center text-gray-900 hover:text-purple-700 transition-colors">
               טופס הצטרפות
@@ -139,46 +138,35 @@ const RegistrationForm = () => {
           </CardHeader>
           <CardContent className="p-6">
             <form onSubmit={handleSubmit} className="space-y-6">
-              <div className="animate-fade-in" style={{ animationDelay: '0.2s' }}>
-                <PersonalDetailsForm 
-                  formData={formData}
-                  onInputChange={handleInputChange}
-                />
-              </div>
+              <PersonalDetailsForm 
+                formData={formData}
+                onInputChange={handleInputChange}
+              />
 
-              <div className="animate-fade-in" style={{ animationDelay: '0.4s' }}>
-                <BusinessDetailsForm 
-                  formData={formData}
-                  onInputChange={handleInputChange}
-                  onCheckboxChange={handleCheckboxChange}
-                />
-              </div>
+              <BusinessDetailsForm 
+                formData={formData}
+                onInputChange={handleInputChange}
+                onCheckboxChange={handleCheckboxChange}
+              />
 
-              <div className="animate-fade-in" style={{ animationDelay: '0.6s' }}>
-                <CommunityFocusForm 
-                  formData={formData}
-                  onCheckboxChange={handleCheckboxChange}
-                />
-              </div>
+              <CommunityFocusForm 
+                formData={formData}
+                onCheckboxChange={handleCheckboxChange}
+              />
 
-              <div className="animate-fade-in" style={{ animationDelay: '0.8s' }}>
-                <NotesForm 
-                  formData={formData}
-                  onInputChange={handleInputChange}
-                />
-              </div>
+              <NotesForm 
+                formData={formData}
+                onInputChange={handleInputChange}
+              />
 
-              <div className="animate-fade-in" style={{ animationDelay: '1s' }}>
-                <TermsDialog 
-                  formData={formData}
-                  onBooleanChange={handleBooleanChange}
-                />
-              </div>
+              <TermsDialog 
+                formData={formData}
+                onBooleanChange={handleBooleanChange}
+              />
 
               <Button 
                 type="submit" 
-                className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white py-3 text-lg font-semibold transition-all duration-200 transform hover:scale-105 hover:shadow-lg animate-fade-in"
-                style={{ animationDelay: '1.2s' }}
+                className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white py-3 text-lg font-semibold transition-all duration-200 hover:shadow-lg"
                 disabled={isSubmitting}
               >
                 {isSubmitting ? 'שולח...' : 'הצטרף לקהילה'}
