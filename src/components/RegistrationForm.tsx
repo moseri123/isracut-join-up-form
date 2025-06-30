@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -70,8 +71,7 @@ const RegistrationForm = () => {
     setIsSubmitting(true);
     
     try {
-      // Replace with your actual Google Apps Script URL
-      const scriptUrl = 'YOUR_GOOGLE_APPS_SCRIPT_URL_HERE';
+      const scriptUrl = 'https://script.google.com/macros/s/AKfycbz3ul4bGupD4MiDKvJ6HVXqkvImFaxeQmW66HfW2Myq_vWRPdA9bWJXCaELohXNgDXl/exec';
       
       const response = await fetch(scriptUrl, {
         method: 'POST',
