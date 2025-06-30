@@ -9,6 +9,7 @@ import CommunityFocusForm from './CommunityFocusForm';
 import NotesForm from './NotesForm';
 import TermsDialog from './TermsDialog';
 import BenefitsCard from './BenefitsCard';
+import SuccessDialog from './SuccessDialog';
 
 const RegistrationForm = () => {
   const { toast } = useToast();
@@ -25,6 +26,8 @@ const RegistrationForm = () => {
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showSuccessDialog, setShowSuccessDialog] = useState(false);
+  const [memberNumber, setMemberNumber] = useState('');
 
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -67,7 +70,8 @@ const RegistrationForm = () => {
     setIsSubmitting(true);
     
     try {
-      const scriptUrl = 'YOUR_GOOGLE_SCRIPT_URL_HERE';
+      // Replace with your actual Google Apps Script URL
+      const scriptUrl = 'YOUR_GOOGLE_APPS_SCRIPT_URL_HERE';
       
       const response = await fetch(scriptUrl, {
         method: 'POST',
@@ -77,12 +81,13 @@ const RegistrationForm = () => {
         body: JSON.stringify(formData)
       });
 
-      if (response.ok) {
-        toast({
-          title: "הרשמה בוצעה בהצלחה!",
-          description: "תודה על הצטרפותך לקהילת המספרות של ישראל",
-        });
+      const result = await response.json();
+
+      if (result.success) {
+        setMemberNumber(result.memberNumber);
+        setShowSuccessDialog(true);
         
+        // Reset form
         setFormData({
           firstName: '',
           lastName: '',
@@ -98,9 +103,10 @@ const RegistrationForm = () => {
         throw new Error('Failed to submit');
       }
     } catch (error) {
+      console.error('Submission error:', error);
       toast({
         title: "שגיאה בשליחה",
-        description: "אנא נסה שוב מאוחר יותר",
+        description: "אנא נסה שוב מאוחר יותר או בדוק את החיבור לאינטרנט",
         variant: "destructive"
       });
     } finally {
@@ -108,14 +114,19 @@ const RegistrationForm = () => {
     }
   };
 
+  const handleSuccessClose = () => {
+    setShowSuccessDialog(false);
+    setMemberNumber('');
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-pink-50 via-purple-50 to-indigo-50 py-8 px-4 animate-fade-in" dir="rtl">
       <div className="max-w-2xl mx-auto">
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full mb-4 shadow-lg hover:shadow-xl transition-all duration-300">
+          <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full mb-4 shadow-lg">
             <Scissors className="w-8 h-8 text-white" />
           </div>
-          <h1 className="text-4xl font-bold text-gray-900 mb-2 hover:text-purple-600 transition-colors duration-300">
+          <h1 className="text-4xl font-bold text-gray-900 mb-2">
             קהילת המספרות של ישראל
           </h1>
           <p className="text-lg text-gray-600 flex items-center justify-center gap-2">
@@ -127,9 +138,9 @@ const RegistrationForm = () => {
 
         <BenefitsCard />
 
-        <Card className="shadow-2xl border-0 hover:shadow-3xl transition-all duration-300">
+        <Card className="shadow-2xl border-0">
           <CardHeader className="bg-gradient-to-r from-indigo-100 to-purple-100 border-b border-purple-200">
-            <CardTitle className="text-2xl text-center text-gray-900 hover:text-purple-700 transition-colors">
+            <CardTitle className="text-2xl text-center text-gray-900">
               טופס הצטרפות
             </CardTitle>
             <CardDescription className="text-center text-gray-600">
@@ -166,7 +177,7 @@ const RegistrationForm = () => {
 
               <Button 
                 type="submit" 
-                className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white py-3 text-lg font-semibold transition-all duration-200 hover:shadow-lg"
+                className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white py-3 text-lg font-semibold"
                 disabled={isSubmitting}
               >
                 {isSubmitting ? 'שולח...' : 'הצטרף לקהילה'}
@@ -174,6 +185,12 @@ const RegistrationForm = () => {
             </form>
           </CardContent>
         </Card>
+
+        <SuccessDialog 
+          isOpen={showSuccessDialog}
+          onClose={handleSuccessClose}
+          memberNumber={memberNumber}
+        />
       </div>
     </div>
   );
