@@ -71,7 +71,7 @@ const RegistrationForm = () => {
     setIsSubmitting(true);
     
     try {
-      const scriptUrl = 'https://script.google.com/macros/s/AKfycbz3ul4bGupD4MiDKvJ6HVXqkvImFaxeQmW66HfW2Myq_vWRPdA9bWJXCaELohXNgDXl/exec';
+      const scriptUrl = 'https://script.google.com/macros/s/AKfycbxw4wGqG4YxOPChf6pYmnDa0GjBPDFRBACG3ByqrfK83_7fSSsPIvIbvfKQESK1qDPg/exec';
       
       const response = await fetch(scriptUrl, {
         method: 'POST',
