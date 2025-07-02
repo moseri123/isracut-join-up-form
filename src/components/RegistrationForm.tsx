@@ -93,14 +93,22 @@ const RegistrationForm = () => {
       }, 30000);
 
       console.log('שולח בקשה...');
-      const response = await fetch(scriptUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-        signal: controller.signal
-      });
+const formDataToSend = new FormData();
+formDataToSend.append("firstName", formData.firstName);
+formDataToSend.append("lastName", formData.lastName);
+formDataToSend.append("email", formData.email);
+formDataToSend.append("phone", formData.phone);
+formDataToSend.append("businessName", formData.businessName);
+formDataToSend.append("specialization", formData.specialization.join(","));
+formDataToSend.append("communityFocus", formData.communityFocus.join(","));
+formDataToSend.append("notes", formData.notes);
+formDataToSend.append("agreeToTerms", formData.agreeToTerms ? "true" : "false");
+
+const response = await fetch(scriptUrl, {
+  method: 'POST',
+  body: formDataToSend,
+  signal: controller.signal
+});
 
       clearTimeout(timeoutId);
 
