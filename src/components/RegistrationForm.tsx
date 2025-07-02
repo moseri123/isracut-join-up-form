@@ -71,17 +71,35 @@ const RegistrationForm = () => {
     setIsSubmitting(true);
     
     try {
-      const scriptUrl = 'https://script.google.com/macros/s/AKfycbxw4wGqG4YxOPChf6pYmnDa0GjBPDFRBACG3ByqrfK83_7fSSsPIvIbvfKQESK1qDPg/exec';
+      const scriptUrl = 'https://script.google.com/macros/s/AKfycbwWrOYZfL0ZJmPCfG6YLbPXRS_ZZxLQanXizg_vFs-D8C-E2C1nj6av_BFGuSdLnXw/exec';
       
+      console.log('שולח נתונים לגוגל סקריפט:', formData);
+      console.log('URL של הסקריפט:', scriptUrl);
+
+      // Create AbortController for timeout
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
+
       const response = await fetch(scriptUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formData)
+        body: JSON.stringify(formData),
+        signal: controller.signal
       });
 
+      clearTimeout(timeoutId);
+
+      console.log('תגובה מהשרת - סטטוס:', response.status);
+      console.log('תגובה מהשרת - headers:', response.headers);
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
       const result = await response.json();
+      console.log('תוצאה מהשרת:', result);
 
       if (result.success) {
         setMemberNumber(result.memberNumber);
@@ -99,14 +117,32 @@ const RegistrationForm = () => {
           notes: '',
           agreeToTerms: false
         });
+
+        toast({
+          title: "הטופס נשלח בהצלחה!",
+          description: `מספר החבר שלך: ${result.memberNumber}`,
+        });
       } else {
-        throw new Error('Failed to submit');
+        throw new Error(result.error || 'שגיאה לא ידועה מהשרת');
       }
     } catch (error) {
-      console.error('Submission error:', error);
+      console.error('שגיאה בשליחת הטופס:', error);
+      
+      let errorMessage = "אנא נסה שוב מאוחר יותר";
+      
+      if (error.name === 'AbortError') {
+        errorMessage = "הבקשה ארכה יותר מדי זמן - אנא נסה שוב";
+      } else if (error.message.includes('Failed to fetch')) {
+        errorMessage = "אין חיבור לאינטרנט או בעיה ברשת";
+      } else if (error.message.includes('HTTP error')) {
+        errorMessage = "שגיאה בשרת - אנא נסה שוב מאוחר יותר";
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+
       toast({
-        title: "שגיאה בשליחה",
-        description: "אנא נסה שוב מאוחר יותר או בדוק את החיבור לאינטרנט",
+        title: "שגיאה בשליחת הטופס",
+        description: errorMessage,
         variant: "destructive"
       });
     } finally {
