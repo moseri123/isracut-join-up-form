@@ -145,20 +145,24 @@ const RegistrationForm = () => {
         console.log('=== הטופס נשלח בהצלחה! ===');
         console.log('מספר חבר:', result.memberNumber);
         
-        // שליחה נוספת של מספר החבר לגליון
+        // שליחה פשוטה של מספר החבר לגליון
         try {
           console.log('שולח מספר חבר לגליון...');
-          const memberFormData = new FormData();
-          memberFormData.append("memberNumber", result.memberNumber);
-          memberFormData.append("email", formData.email);
+          const memberData = new FormData();
+          memberData.append("action", "updateMemberNumber");
+          memberData.append("memberNumber", result.memberNumber);
+          memberData.append("email", formData.email);
 
-          await fetch(scriptUrl, {
+          const memberResponse = await fetch(scriptUrl, {
             method: 'POST',
-            body: memberFormData
+            body: memberData
           });
-          console.log('מספר חבר נשלח לגליון בהצלחה');
+          
+          if (memberResponse.ok) {
+            console.log('מספר חבר נשלח לגליון בהצלחה');
+          }
         } catch (memberError) {
-          console.error('שגיאה בשליחת מספר חבר לגליון:', memberError);
+          console.error('שגיאה בשליחת מספר חבר:', memberError);
           // לא נעצור את התהליך בגלל זה
         }
         
