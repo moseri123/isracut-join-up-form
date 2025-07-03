@@ -80,8 +80,11 @@ const RegistrationForm = () => {
       
       console.log('=== שליחת בקשה לגוגל סקריפט ===');
       console.log('URL:', scriptUrl);
-      console.log('נתונים נשלחים:', JSON.stringify(formData, null, 2));
 
+      // בדיקה ראשונית של הרשת
+      console.log('בודק חיבור לאינטרנט...');
+      
+      // Create AbortController for timeout
       const controller = new AbortController();
       const timeoutId = setTimeout(() => {
         console.log('Timeout reached - aborting request');
@@ -90,23 +93,20 @@ const RegistrationForm = () => {
 
       console.log('שולח בקשה...');
       
-      // שליחת הנתונים כ-JSON במקום FormData
+      const formDataToSend = new FormData();
+      formDataToSend.append("firstName", formData.firstName);
+      formDataToSend.append("lastName", formData.lastName);
+      formDataToSend.append("email", formData.email);
+      formDataToSend.append("phone", formData.phone);
+      formDataToSend.append("businessName", formData.businessName);
+      formDataToSend.append("specialization", formData.specialization.join(","));
+      formDataToSend.append("communityFocus", formData.communityFocus.join(","));
+      formDataToSend.append("notes", formData.notes);
+      formDataToSend.append("agreeToTerms", formData.agreeToTerms ? "true" : "false");
+
       const response = await fetch(scriptUrl, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          firstName: formData.firstName,
-          lastName: formData.lastName,
-          email: formData.email,
-          phone: formData.phone,
-          businessName: formData.businessName,
-          specialization: formData.specialization,
-          communityFocus: formData.communityFocus,
-          notes: formData.notes,
-          agreeToTerms: formData.agreeToTerms
-        }),
+        body: formDataToSend,
         signal: controller.signal
       });
 
@@ -144,6 +144,23 @@ const RegistrationForm = () => {
       if (result.success) {
         console.log('=== הטופס נשלח בהצלחה! ===');
         console.log('מספר חבר:', result.memberNumber);
+        
+        // שליחה נוספת של מספר החבר לגליון
+        try {
+          console.log('שולח מספר חבר לגליון...');
+          const memberFormData = new FormData();
+          memberFormData.append("memberNumber", result.memberNumber);
+          memberFormData.append("email", formData.email);
+
+          await fetch(scriptUrl, {
+            method: 'POST',
+            body: memberFormData
+          });
+          console.log('מספר חבר נשלח לגליון בהצלחה');
+        } catch (memberError) {
+          console.error('שגיאה בשליחת מספר חבר לגליון:', memberError);
+          // לא נעצור את התהליך בגלל זה
+        }
         
         setMemberNumber(result.memberNumber);
         setShowSuccessDialog(true);
