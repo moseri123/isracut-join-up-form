@@ -78,12 +78,9 @@ const RegistrationForm = () => {
     try {
       const scriptUrl = 'https://script.google.com/macros/s/AKfycbwWrOYZfL0ZJmPCfG6YLbPXRS_ZZxLQanXizg_vFs-D8C-E2C1nj6av_BFGuSdLnXw/exec';
       
-      console.log('=== שליחת בקשה לגוגל סקריפט ===');
+      console.log('=== שליחת בקשה אחת לגוגל סקריפט ===');
       console.log('URL:', scriptUrl);
 
-      // בדיקה ראשונית של הרשת
-      console.log('בודק חיבור לאינטרנט...');
-      
       // Create AbortController for timeout
       const controller = new AbortController();
       const timeoutId = setTimeout(() => {
@@ -104,6 +101,18 @@ const RegistrationForm = () => {
       formDataToSend.append("notes", formData.notes);
       formDataToSend.append("agreeToTerms", formData.agreeToTerms ? "true" : "false");
 
+      console.log('נתונים שנשלחים:', {
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        email: formData.email,
+        phone: formData.phone,
+        businessName: formData.businessName,
+        specialization: formData.specialization.join(","),
+        communityFocus: formData.communityFocus.join(","),
+        notes: formData.notes,
+        agreeToTerms: formData.agreeToTerms ? "true" : "false"
+      });
+
       const response = await fetch(scriptUrl, {
         method: 'POST',
         body: formDataToSend,
@@ -115,7 +124,6 @@ const RegistrationForm = () => {
       console.log('=== תגובה מהשרת התקבלה ===');
       console.log('Status:', response.status);
       console.log('Status Text:', response.statusText);
-      console.log('Headers:', Object.fromEntries(response.headers.entries()));
       console.log('OK:', response.ok);
 
       if (!response.ok) {
@@ -144,44 +152,7 @@ const RegistrationForm = () => {
       if (result.success) {
         console.log('=== הטופס נשלח בהצלחה! ===');
         console.log('מספר חבר שהתקבל:', result.memberNumber);
-        
-        // שליחה נפרדת של מספר החבר לגליון
-        console.log('=== מתחיל שליחת מספר חבר לגליון ===');
-        try {
-          const memberFormData = new FormData();
-          memberFormData.append("memberNumber", result.memberNumber);
-          memberFormData.append("email", formData.email);
-          memberFormData.append("firstName", formData.firstName);
-          memberFormData.append("lastName", formData.lastName);
-          
-          console.log('נתונים שנשלחים לגליון:', {
-            memberNumber: result.memberNumber,
-            email: formData.email,
-            firstName: formData.firstName,
-            lastName: formData.lastName
-          });
-
-          const memberResponse = await fetch(scriptUrl, {
-            method: 'POST',
-            body: memberFormData
-          });
-          
-          console.log('תגובה משליחת מספר חבר - Status:', memberResponse.status);
-          console.log('תגובה משליחת מספר חבר - OK:', memberResponse.ok);
-          
-          const memberResponseText = await memberResponse.text();
-          console.log('תגובה גולמית משליחת מספר חבר:', memberResponseText);
-          
-          if (memberResponse.ok) {
-            console.log('מספר חבר נשלח לגליון בהצלחה!');
-          } else {
-            console.error('שגיאה בשליחת מספר חבר לגליון - Status:', memberResponse.status);
-          }
-        } catch (memberError) {
-          console.error('שגיאה חמורה בשליחת מספר חבר:', memberError);
-          console.error('סוג השגיאה:', memberError.name);
-          console.error('הודעת השגיאה:', memberError.message);
-        }
+        console.log('מספר החבר צריך להיות בעמודה 11 בגליון');
         
         setMemberNumber(result.memberNumber);
         setShowSuccessDialog(true);
@@ -212,7 +183,6 @@ const RegistrationForm = () => {
       console.error('=== שגיאה בתהליך השליחה ===');
       console.error('סוג השגיאה:', error.name);
       console.error('הודעת השגיאה:', error.message);
-      console.error('Stack trace:', error.stack);
       
       let errorMessage = "אנא נסה שוב מאוחר יותר";
       
