@@ -143,27 +143,44 @@ const RegistrationForm = () => {
 
       if (result.success) {
         console.log('=== הטופס נשלח בהצלחה! ===');
-        console.log('מספר חבר:', result.memberNumber);
+        console.log('מספר חבר שהתקבל:', result.memberNumber);
         
-        // שליחה פשוטה של מספר החבר לגליון
+        // שליחה נפרדת של מספר החבר לגליון
+        console.log('=== מתחיל שליחת מספר חבר לגליון ===');
         try {
-          console.log('שולח מספר חבר לגליון...');
-          const memberData = new FormData();
-          memberData.append("action", "updateMemberNumber");
-          memberData.append("memberNumber", result.memberNumber);
-          memberData.append("email", formData.email);
+          const memberFormData = new FormData();
+          memberFormData.append("memberNumber", result.memberNumber);
+          memberFormData.append("email", formData.email);
+          memberFormData.append("firstName", formData.firstName);
+          memberFormData.append("lastName", formData.lastName);
+          
+          console.log('נתונים שנשלחים לגליון:', {
+            memberNumber: result.memberNumber,
+            email: formData.email,
+            firstName: formData.firstName,
+            lastName: formData.lastName
+          });
 
           const memberResponse = await fetch(scriptUrl, {
             method: 'POST',
-            body: memberData
+            body: memberFormData
           });
           
+          console.log('תגובה משליחת מספר חבר - Status:', memberResponse.status);
+          console.log('תגובה משליחת מספר חבר - OK:', memberResponse.ok);
+          
+          const memberResponseText = await memberResponse.text();
+          console.log('תגובה גולמית משליחת מספר חבר:', memberResponseText);
+          
           if (memberResponse.ok) {
-            console.log('מספר חבר נשלח לגליון בהצלחה');
+            console.log('מספר חבר נשלח לגליון בהצלחה!');
+          } else {
+            console.error('שגיאה בשליחת מספר חבר לגליון - Status:', memberResponse.status);
           }
         } catch (memberError) {
-          console.error('שגיאה בשליחת מספר חבר:', memberError);
-          // לא נעצור את התהליך בגלל זה
+          console.error('שגיאה חמורה בשליחת מספר חבר:', memberError);
+          console.error('סוג השגיאה:', memberError.name);
+          console.error('הודעת השגיאה:', memberError.message);
         }
         
         setMemberNumber(result.memberNumber);
