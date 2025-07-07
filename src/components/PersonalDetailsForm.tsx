@@ -2,7 +2,7 @@
 import React from 'react';
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { User } from "lucide-react";
+import { User, MessageCircle } from "lucide-react";
 
 interface PersonalDetailsFormProps {
   formData: {
@@ -56,7 +56,10 @@ const PersonalDetailsForm: React.FC<PersonalDetailsFormProps> = ({ formData, onI
           />
         </div>
         <div>
-          <Label htmlFor="phone">מספר טלפון *</Label>
+          <Label htmlFor="phone" className="flex items-center gap-2">
+            מספר טלפון (מספר חבר) *
+            <MessageCircle className="w-4 h-4 text-green-600" />
+          </Label>
           <Input
             id="phone"
             type="tel"
@@ -64,7 +67,12 @@ const PersonalDetailsForm: React.FC<PersonalDetailsFormProps> = ({ formData, onI
             onChange={(e) => onInputChange('phone', e.target.value)}
             required
             className="mt-1"
+            placeholder="050-1234567"
           />
+          <p className="text-xs text-gray-500 mt-1 flex items-center gap-1">
+            <MessageCircle className="w-3 h-3 text-green-600" />
+            מספר זה ישמש כמספר החבר שלך וצריך להיות זמין לווצאפ
+          </p>
         </div>
       </div>
     </div>

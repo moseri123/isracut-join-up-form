@@ -80,6 +80,7 @@ const RegistrationForm = () => {
       
       console.log('=== שליחת בקשה אחת לגוגל סקריפט ===');
       console.log('URL:', scriptUrl);
+      console.log('מספר הטלפון ישמש כמספר חבר:', formData.phone);
 
       // Create AbortController for timeout
       const controller = new AbortController();
@@ -151,10 +152,10 @@ const RegistrationForm = () => {
 
       if (result.success) {
         console.log('=== הטופס נשלח בהצלחה! ===');
-        console.log('מספר חבר שהתקבל:', result.memberNumber);
-        console.log('מספר החבר צריך להיות בעמודה 11 בגליון');
+        console.log('מספר החבר הוא מספר הטלפון:', formData.phone);
         
-        setMemberNumber(result.memberNumber);
+        // Use phone number as member number
+        setMemberNumber(formData.phone);
         setShowSuccessDialog(true);
         
         // Reset form
@@ -172,7 +173,7 @@ const RegistrationForm = () => {
 
         toast({
           title: "הטופס נשלח בהצלחה!",
-          description: `מספר החבר שלך: ${result.memberNumber}`,
+          description: `מספר החבר שלך: ${formData.phone}`,
         });
       } else {
         console.error('השרת החזיר success: false');
