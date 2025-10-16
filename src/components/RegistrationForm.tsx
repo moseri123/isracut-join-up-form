@@ -128,12 +128,12 @@ const RegistrationForm = () => {
       console.log('OK:', response.ok);
 
       if (!response.ok) {
-        console.error('תגובה לא תקינה מהשרת:', {
+        console.warn('תגובה לא תקינה מהשרת, ממשיכים לנסות לפרש בכל זאת:', {
           status: response.status,
           statusText: response.statusText,
           url: response.url
         });
-        throw new Error(`HTTP error! status: ${response.status} - ${response.statusText}`);
+        // לא זורקים שגיאה כאן כדי לאפשר טיפול במענה שאינו JSON/opaque
       }
 
       // נסיון לפרש JSON, ואם לא - נניח הצלחה כל עוד המענה תקין
