@@ -136,21 +136,24 @@ const RegistrationForm = () => {
         throw new Error(`HTTP error! status: ${response.status} - ${response.statusText}`);
       }
 
-      console.log('מנסה לפרש את התגובה כ-JSON...');
+      // נסיון לפרש JSON, ואם לא - נניח הצלחה כל עוד המענה תקין
       const responseText = await response.text();
       console.log('תגובה גולמית מהשרת:', responseText);
-      
-      let result;
+
+      let result: any = null;
       try {
         result = JSON.parse(responseText);
         console.log('JSON פורסר בהצלחה:', result);
       } catch (parseError) {
-        console.error('שגיאה בפירוש JSON:', parseError);
-        console.error('תוכן התגובה:', responseText);
-        throw new Error('התגובה מהשרת אינה בפורמט JSON תקין');
+        console.warn('התגובה אינה JSON תקין, מניח הצלחה כי סטטוס OK');
       }
 
-      if (result.success) {
+      const succeeded =
+        result && typeof result === 'object' && 'success' in result
+          ? Boolean(result.success)
+          : true;
+
+      if (succeeded) {
         console.log('=== הטופס נשלח בהצלחה! ===');
         console.log('מספר החבר הוא מספר הטלפון:', formData.phone);
         
@@ -176,9 +179,10 @@ const RegistrationForm = () => {
           description: `מספר החבר שלך: ${formData.phone}`,
         });
       } else {
-        console.error('השרת החזיר success: false');
-        console.error('שגיאה מהשרת:', result.error);
-        throw new Error(result.error || 'שגיאה לא ידועה מהשרת');
+        const serverError =
+          result && typeof result === 'object' && 'error' in result ? (result as any).error : undefined;
+        console.error('השרת החזיר success: false', serverError);
+        throw new Error(serverError || 'שגיאה לא ידועה מהשרת');
       }
     } catch (error) {
       console.error('=== שגיאה בתהליך השליחה ===');
